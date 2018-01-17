@@ -147,7 +147,6 @@ def msglist(roomid):
             'X-User-Id': admin_id
     }
     result = requests.get(url,headers=headers).json()
-    length = len(result['messages'])
     for i in range(len(result['messages'])-1,-1,-1):
         print result['messages'][i]['u']['username'] + '\t' + result['messages'][i]['msg']
 
