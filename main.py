@@ -59,6 +59,11 @@ def help_userlist():
     print ' -v' + '\t' + '詳細表示'
     print ''
 
+def help_msglist():
+    print ''
+    print 'Usage: ./main.py msglist [roomId]'
+    print ''
+
 def help_usercreate():
     print ''
     print 'Usage: ./main.py usercreate [username] [password]'
@@ -133,6 +138,19 @@ def userlist(debug):
         for i in range(len(result['users'])):
             print result['users'][i]['name'] + '\t' + result['users'][i]['status']
 
+#### COMMAND:msglist ####
+def msglist(roomid):
+    url = server + 'channels.history' + '?roomId=' + roomid + '&count=10000'
+    headers = {
+            'Content-type': 'application/json',
+            'X-Auth-Token': admin_token,
+            'X-User-Id': admin_id
+    }
+    result = requests.get(url,headers=headers).json()
+    length = len(result['messages'])
+    for i in range(len(result['messages'])-1,-1,-1):
+        print result['messages'][i]['u']['username'] + '\t' + result['messages'][i]['msg']
+
 #### COMMAND:usercreate ####
 def usercreate(username,password):
     url = server + 'users.create'
@@ -181,16 +199,24 @@ try:
         if len(argvs) < 3:
             userlist(False)
         elif len(argvs) == 3:
-            if argvs[2] == '-v':
+            if argvs[2] == '-h' or argvs[2] == '--help':
+                help_userlist()
+            elif argvs[2] == '-v':
                 userlist(True)
-        else:
-            error()
+
+    elif argvs[1] == 'msglist':
+        if len(argvs) == 3:
+            if argvs[2] == '-h' or argvs[2] == '--help':
+                pass
+            else:
+                msglist(argvs[2])
 
     elif argvs[1] == 'usercreate':
         if argvs[2] == '-h' or argvs[2] == '--help':
             help_usercreate()
         else:
             usercreate(argvs[2],argvs[3])
-
+    else:
+        error()
 except:
     error()
