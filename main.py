@@ -32,6 +32,7 @@ def help_all():
     print ' info' + '\t\t'        + 'サーバー情報の表示'
     print ' login' + '\t\t'       + 'サーバーへログイン'
     print ' about' + '\t\t'       + 'ユーザー情報の表示'
+    print ' msglist' + '\t'       + 'チャットルームのメッセージリストを表示'
     print ' userlist' + '\t'      + 'ユーザー数の表示'
     print ' usercreate' + '\t'    + 'ユーザーの作成'
     print ''
@@ -206,7 +207,7 @@ try:
     elif argvs[1] == 'msglist':
         if len(argvs) == 3:
             if argvs[2] == '-h' or argvs[2] == '--help':
-                pass
+                help_msglist()
             else:
                 msglist(argvs[2])
 
