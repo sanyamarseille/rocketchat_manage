@@ -14,7 +14,7 @@ argvs = sys.argv
 email = '@day5.com'
 
 method = 'http://'
-address = 'localhost'
+address = 'localhost:3000'
 uri = '/api/v1/'
 server = method + address + uri
 
@@ -163,7 +163,8 @@ def usercreate(username,password):
         'email': username + email,
         'name': username,
         'username': username,
-        'password': password
+        'password': password,
+        'requirePasswordChange': True
     }
 
     #### CONNECT SERVER & PRINT RESULT ####
