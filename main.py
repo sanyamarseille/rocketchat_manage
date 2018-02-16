@@ -11,16 +11,22 @@ import json
 
 ## Set variable ##
 argvs = sys.argv
-email = '@day5.com'
+## Set domain ##
+## email = '@example.com' ##
+email = ''
 
 method = 'http://'
-address = 'localhost:3000'
+## Set Server Address ##
+## address = 'localhost:3000' ##
+address = ''
+
 uri = '/api/v1/'
 server = method + address + uri
 
 ## !!_Set YourID and YourToken_!! ##
 admin_token = ''
 admin_id = ''
+
 
 ##### HELP PART ####
 def help_all():
@@ -35,6 +41,8 @@ def help_all():
     print ' msglist' + '\t'       + 'チャットルームのメッセージリストを表示'
     print ' userlist' + '\t'      + 'ユーザー数の表示'
     print ' usercreate' + '\t'    + 'ユーザーの作成'
+    print ' channellist' + '\t'   + 'チャンネルのリスト表示'
+    print ' channelsaddall' + '\t'+ 'チャンネルへユーザーを全員追加'
     print ''
 
     #### OPTIONS ####
@@ -73,10 +81,21 @@ def help_usercreate():
     print 'password' + '\t'  + 'ログインパスワード'
     print ''
 
+def help_channelsaddall():
+    print ''
+    print 'Usage: ./main.py channelsaddall [RoomID]'
+    print ''
+    print 'RoomID' + '\t' + 'チャンネルのID'
+    print ''
+    print 'Hint!!'
+    print './main.py channellistでRoomIDを取得してください'
+    print ''
+
 #### SHARED FUNCTION ####
 def error():
     print 'エラーです.'
     print '引数で -h もしくは --help を指定し、使い方を確認してください.'
+    print ''
 
 #### COMMAND:INFO ####
 def info():
@@ -176,6 +195,34 @@ def usercreate(username,password):
         print 'Login Username: {}'.format(result['user']['username'])
         print 'Login Password: ' + password
 
+def channellist():
+    url = server + 'channels.list'
+    headers = {
+        'X-Auth-Token': admin_token,
+        'X-User-Id': admin_id        
+    }
+    result = requests.get(url,headers=headers).json()
+    print ''
+    for i in range(len(result['channels'])-1,-1,-1):
+        print result['channels'][i]['name'] + '\t\t' + result['channels'][i]['_id']
+    print ''
+
+def channelsaddall(roomid):
+    url = server + 'channels.addAll'
+    headers = {
+        'Content-type': 'application/json',
+        'X-Auth-Token': admin_token,
+        'X-User-Id': admin_id             
+    }
+    payload = {
+        'roomId': roomid
+    }
+    result = requests.post(url,headers=headers,data=json.dumps(payload)).json()
+    print ''
+    print 'Result: {}'.format(result['success'])
+    print 'RoomName: {}'.format(result['channel']['name'])
+    print ''
+
 #### MAIN ####
 try:
     if argvs[1] == '-h' or argvs[1] == '--help':
@@ -217,6 +264,15 @@ try:
             help_usercreate()
         else:
             usercreate(argvs[2],argvs[3])
+    
+    elif argvs[1] == 'channellist':
+        channellist()
+    
+    elif argvs[1] == 'channelsaddall':
+        if argvs[2] == '-h' or argvs[2] == '--help':
+            help_channelsaddall()
+        else:
+            channelsaddall(argvs[2])
     else:
         error()
 except:
